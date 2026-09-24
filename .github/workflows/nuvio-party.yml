@@ -7,6 +7,9 @@ on:
     - cron: "23 3 * * *"
   push:
     branches: [watchparty]
+    paths-ignore:
+      - ".github/README.md"
+      - ".github/watchparty/**"
   workflow_dispatch:
     inputs:
       force:

@@ -56,7 +56,7 @@ https://github.com/AntoninoScardina/NuvioTV/releases/latest/download/NuvioPartyT
 ```
 
 > [!IMPORTANT]
-> Nuvio Party uses the **same package name as Nuvio**, so you won't end up with two apps. Android only lets an app be updated by one signed with the same key, which means **the first time you have to uninstall the official Nuvio**. After that, updates install over the existing app from inside Nuvio Party. Uninstalling removes local data, so keep your add-on URLs at hand.
+> Nuvio Party uses the **same package name as Nuvio**, so you won't end up with two apps. Android only lets an app be updated by one signed with the same key, which means **the first time you have to uninstall the official Nuvio**. After that, updates install over the existing app from inside Nuvio Party. Sign in with your Nuvio account afterwards and your add-ons come back.
 
 ## ❓ FAQ
 
@@ -79,9 +79,9 @@ Only the WebRTC handshake goes through VDO.Ninja's public signaling server. Afte
 </details>
 
 <details>
-<summary><b>Does the Nuvio account work?</b></summary>
+<summary><b>Does my Nuvio account work?</b></summary>
 
-Signing in to a Nuvio account and cloud sync are **not available** in this build, because the official backend keys aren't public. Add-ons, settings and watch progress are stored on the device.
+Yes. Sign in with the QR code as usual: your add-ons, library and progress come back, because Nuvio Party uses Nuvio's own servers. Watch Party itself doesn't need an account.
 </details>
 
 <details>
@@ -140,12 +140,12 @@ Sul telefono il pulsante è nella barra azioni del player, e "Unisciti a un Watc
 - **Telefono Android:** [`NuvioParty.apk`](https://github.com/AntoninoScardina/NuvioMobile/releases/latest/download/NuvioParty.apk).
 
 > [!IMPORTANT]
-> Nuvio Party usa lo **stesso nome pacchetto di Nuvio**, quindi non avrai due app. Android però permette di aggiornare un'app solo con un APK firmato dalla stessa chiave, quindi **la prima volta devi disinstallare Nuvio ufficiale**. Dopo, gli aggiornamenti si installano sopra dall'app stessa. La disinstallazione cancella i dati locali, quindi tieni a portata di mano gli URL dei tuoi addon.
+> Nuvio Party usa lo **stesso nome pacchetto di Nuvio**, quindi non avrai due app. Android però permette di aggiornare un'app solo con un APK firmato dalla stessa chiave, quindi **la prima volta devi disinstallare Nuvio ufficiale**. Dopo, gli aggiornamenti si installano sopra dall'app stessa. Dopo, accedi con il tuo account Nuvio e ritrovi i tuoi addon.
 
 ### Limiti
 
 - Gli stream torrent/P2P non si possono condividere, perché passano da un motore locale sul dispositivo dell'host.
 - I link legati a un indirizzo IP non partono per chi è su un'altra connessione.
-- Il login all'account Nuvio e la sincronizzazione cloud **non sono disponibili**, perché le chiavi del server ufficiale non sono pubbliche. Addon e progressi restano salvati sul dispositivo.
+- L'**account Nuvio funziona**: accedi con il QR come sempre e ritrovi addon, libreria e progressi. Il Watch Party invece non richiede un account.
 
 Progetto **non ufficiale**, non affiliato al team di Nuvio. Licenza **GPL-3.0**. Se ti piace, lascia una ⭐!
