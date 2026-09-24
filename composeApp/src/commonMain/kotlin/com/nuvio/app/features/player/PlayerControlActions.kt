@@ -19,6 +19,7 @@ import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Flag
+import androidx.compose.material.icons.rounded.Groups
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.LockOpen
 import androidx.compose.material.icons.rounded.SkipNext
@@ -49,6 +50,7 @@ import com.nuvio.app.core.ui.AppIconResource
 import com.nuvio.app.core.ui.NuvioBackButton
 import com.nuvio.app.core.ui.appIconPainter
 import com.nuvio.app.core.ui.nuvioTypeScale
+import com.nuvio.app.features.watchparty.WatchPartyManager
 import nuvio.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 
@@ -113,6 +115,10 @@ internal fun PlayerControlActions(
         PlayerControlAction(
             stringResource(Res.string.compose_player_audio), onAudioClick,
             painter = appIconPainter(AppIconResource.PlayerAudioFilled),
+        ),
+        PlayerControlAction(
+            stringResource(Res.string.watch_party_title), WatchPartyManager::openPanel,
+            icon = Icons.Rounded.Groups,
         ),
         onSourcesClick?.let {
             PlayerControlAction(

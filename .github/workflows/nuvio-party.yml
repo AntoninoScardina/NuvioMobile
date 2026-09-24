@@ -1,0 +1,142 @@
+name: Nuvio Party (build automatica)
+
+# Ogni notte: unisce le novità di Nuvio ufficiale al Watch Party, compila e pubblica
+# una release. L'app installata la trova da sola tramite il controllo aggiornamenti.
+on:
+  schedule:
+    - cron: "23 3 * * *"
+  push:
+    branches: [watchparty]
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Pubblica anche se non ci sono novità"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nuvio-party-release
+  cancel-in-progress: false
+
+env:
+  UPSTREAM_REPO: NuvioMedia/NuvioMobile
+  UPSTREAM_BRANCH: cmp-rewrite
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Unisci Nuvio ufficiale
+        id: merge
+        run: |
+          git config user.name "nuvio-party-bot"
+          git config user.email "nuvio-party-bot@users.noreply.github.com"
+          git remote add upstream "https://github.com/${UPSTREAM_REPO}.git"
+          git fetch --no-tags upstream "${UPSTREAM_BRANCH}"
+          if ! git merge --no-edit "upstream/${UPSTREAM_BRANCH}"; then
+            git merge --abort || true
+            echo "::error::Le modifiche Watch Party non si applicano più sull'ultima versione di Nuvio: serve una sistemazione manuale (merge di upstream/${UPSTREAM_BRANCH} nel branch watchparty)."
+            exit 1
+          fi
+          echo "upstream_sha=$(git rev-parse --short "upstream/${UPSTREAM_BRANCH}")" >> "$GITHUB_OUTPUT"
+          echo "fork_sha=$(git rev-parse --short "${GITHUB_SHA}")" >> "$GITHUB_OUTPUT"
+          echo "upstream_version=$(grep -m1 -oP '^MARKETING_VERSION=\K.*' iosApp/Configuration/Version.xcconfig)" >> "$GITHUB_OUTPUT"
+
+      - name: Serve una nuova build?
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          key="build-key: ${{ steps.merge.outputs.upstream_sha }}-${{ steps.merge.outputs.fork_sha }}"
+          last="$(gh release view --repo "${GITHUB_REPOSITORY}" --json body -q .body 2>/dev/null || true)"
+          if [[ "${{ inputs.force }}" != "true" && "$last" == *"$key"* ]]; then
+            echo "Nessuna novità ($key): salto la build."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "key=$key" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-java@v4
+        if: steps.check.outputs.skip != 'true'
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v6
+        if: steps.check.outputs.skip != 'true'
+
+      - name: Prepara firma, chiavi e versione
+        if: steps.check.outputs.skip != 'true'
+        id: prepare
+        env:
+          KEYSTORE_BASE64: ${{ secrets.NUVIO_PARTY_KEYSTORE_BASE64 }}
+          LOCAL_PROPERTIES_BASE64: ${{ secrets.NUVIO_PARTY_LOCAL_PROPERTIES_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.NUVIO_PARTY_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.NUVIO_PARTY_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.NUVIO_PARTY_KEY_PASSWORD }}
+        run: |
+          if [[ -z "$KEYSTORE_BASE64" ]]; then
+            echo "::error::Manca il secret NUVIO_PARTY_KEYSTORE_BASE64"
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/nuvio-party.jks"
+          : > local.properties
+          if [[ -n "$LOCAL_PROPERTIES_BASE64" ]]; then
+            echo "$LOCAL_PROPERTIES_BASE64" | base64 -d >> local.properties
+            echo >> local.properties
+          fi
+          {
+            echo "NUVIO_RELEASE_STORE_FILE=$RUNNER_TEMP/nuvio-party.jks"
+            echo "NUVIO_RELEASE_STORE_PASSWORD=$STORE_PASSWORD"
+            echo "NUVIO_RELEASE_KEY_ALIAS=$KEY_ALIAS"
+            echo "NUVIO_RELEASE_KEY_PASSWORD=$KEY_PASSWORD"
+          } >> local.properties
+          version_name="$(date -u +%Y).$((10#$(date -u +%m%d))).${GITHUB_RUN_NUMBER}"
+          version_code="$((20000 + GITHUB_RUN_NUMBER))"
+          python3 .github/nuvio-party/prepare.py "$version_name" "$version_code" "${GITHUB_REPOSITORY}"
+          echo "version_name=$version_name" >> "$GITHUB_OUTPUT"
+
+      - name: Compila APK
+        if: steps.check.outputs.skip != 'true'
+        run: >-
+          ./gradlew :androidApp:assembleFullRelease
+          -Pnuvio.android.distribution=full
+          -Pnuvio.app.versionName="${{ steps.prepare.outputs.version_name }}"
+          --stacktrace
+
+      - name: Pubblica release
+        if: steps.check.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${{ steps.prepare.outputs.version_name }}"
+          mkdir -p dist
+          for apk in androidApp/build/outputs/apk/full/release/*.apk; do
+            abi="$(basename "$apk" .apk | sed -E 's/^androidApp-full-(.*)-release$/\1/')"
+            cp "$apk" "dist/NuvioParty-${version}-${abi}.apk"
+          done
+          # Nome fisso per il link "latest" (telefoni arm64, quasi tutti)
+          cp dist/NuvioParty-${version}-arm64-v8a.apk dist/NuvioParty.apk
+          ls -la dist
+          cat > notes.md <<NOTES
+          Nuvio Party per telefono Android — Nuvio ufficiale ${{ steps.merge.outputs.upstream_version }} + Watch Party.
+
+          Quasi tutti i telefoni recenti usano l'APK \`arm64-v8a\`.
+
+          ${{ steps.check.outputs.key }}
+          NOTES
+          gh release create "v${version}" dist/*.apk \
+            --repo "${GITHUB_REPOSITORY}" \
+            --target "${GITHUB_SHA}" \
+            --title "Nuvio Party ${version}" \
+            --notes-file notes.md \
+            --latest

@@ -65,6 +65,11 @@ import nuvio.composeapp.generated.resources.updates_debug_test_title
 import nuvio.composeapp.generated.resources.about_supporters_contributors_subtitle
 import nuvio.composeapp.generated.resources.about_licenses_attributions_subtitle
 import org.jetbrains.compose.resources.stringResource
+import androidx.compose.material.icons.rounded.Groups
+import com.nuvio.app.features.watchparty.WatchPartyManager
+import nuvio.composeapp.generated.resources.watch_party_join_title
+import nuvio.composeapp.generated.resources.watch_party_settings_description
+import nuvio.composeapp.generated.resources.watch_party_title
 
 private const val PRIVACY_POLICY_URL = "https://nuvio.tv/privacy-policy"
 
@@ -123,6 +128,22 @@ internal fun LazyListScope.settingsRootContent(
                         onClick = onTrackingClick,
                     )
                 }
+            }
+        }
+    }
+    item {
+        SettingsSection(
+            title = stringResource(Res.string.watch_party_title),
+            isTablet = isTablet,
+        ) {
+            SettingsGroup(isTablet = isTablet) {
+                SettingsNavigationRow(
+                    title = stringResource(Res.string.watch_party_join_title),
+                    description = stringResource(Res.string.watch_party_settings_description),
+                    icon = Icons.Rounded.Groups,
+                    isTablet = isTablet,
+                    onClick = WatchPartyManager::openJoinDialog,
+                )
             }
         }
     }

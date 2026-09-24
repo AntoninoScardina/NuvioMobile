@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="watch_party_title">Watch Party</string>
+    <string name="watch_party_create_description">Crea una stanza e condividi il codice: chi entra guarda questo stesso stream sincronizzato con te.</string>
+    <string name="watch_party_not_shareable">Questo stream non si può condividere (torrent o stream locale). Scegli una fonte HTTP per avviare un Watch Party.</string>
+    <string name="watch_party_create">Crea stanza</string>
+    <string name="watch_party_close">Chiudi</string>
+    <string name="watch_party_leave">Esci dalla stanza</string>
+    <string name="watch_party_share_code">Condividi questo codice:</string>
+    <string name="watch_party_joined_code">Sei nella stanza:</string>
+    <string name="watch_party_connecting">Connessione in corso…</string>
+    <string name="watch_party_waiting">In attesa che qualcuno entri…</string>
+    <string name="watch_party_participants">Stai guardando con: %1$s</string>
+    <string name="watch_party_error">Errore di connessione: %1$s</string>
+    <string name="watch_party_join_title">Unisciti a un Watch Party</string>
+    <string name="watch_party_join_description">Inserisci il codice mostrato sul dispositivo di chi ha creato la stanza.</string>
+    <string name="watch_party_join_code_label">Codice stanza</string>
+    <string name="watch_party_join">Unisciti</string>
+    <string name="watch_party_invalid_code">Codice non valido: è composto da 6 lettere/numeri.</string>
+    <string name="watch_party_waiting_host">Connesso. In attesa che l\'host avvii la riproduzione…</string>
+    <string name="watch_party_settings_description">Entra in una stanza con un codice e guarda in sincronia</string>
+</resources>

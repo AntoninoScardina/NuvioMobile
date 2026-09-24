@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="watch_party_title">Watch Party</string>
+    <string name="watch_party_create_description">Create a room and share the code: whoever joins watches this same stream in sync with you.</string>
+    <string name="watch_party_not_shareable">This stream can\'t be shared (torrent or local stream). Pick an HTTP source to start a Watch Party.</string>
+    <string name="watch_party_create">Create room</string>
+    <string name="watch_party_close">Close</string>
+    <string name="watch_party_leave">Leave room</string>
+    <string name="watch_party_share_code">Share this code:</string>
+    <string name="watch_party_joined_code">You are in room:</string>
+    <string name="watch_party_connecting">Connecting…</string>
+    <string name="watch_party_waiting">Waiting for someone to join…</string>
+    <string name="watch_party_participants">Watching with: %1$s</string>
+    <string name="watch_party_error">Connection error: %1$s</string>
+    <string name="watch_party_join_title">Join a Watch Party</string>
+    <string name="watch_party_join_description">Enter the code shown on the host\'s device.</string>
+    <string name="watch_party_join_code_label">Room code</string>
+    <string name="watch_party_join">Join</string>
+    <string name="watch_party_invalid_code">Invalid code: it has 6 letters/numbers.</string>
+    <string name="watch_party_waiting_host">Connected. Waiting for the host to start playback…</string>
+    <string name="watch_party_settings_description">Join a room with a code and watch in sync</string>
+</resources>

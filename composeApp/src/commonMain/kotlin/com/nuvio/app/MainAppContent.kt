@@ -1,5 +1,6 @@
 package com.nuvio.app
 
+import com.nuvio.app.features.watchparty.WatchPartyHost
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.MutableTransitionState
@@ -696,6 +697,10 @@ internal fun MainAppContent(
             resumePromptItem = null
         }
     }
+
+        if (ownsAppRuntime) {
+            WatchPartyHost(navController)
+        }
 
         LaunchedEffect(navController) {
             if (!ownsAppRuntime) return@LaunchedEffect
